@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import Layout from "./Layout";
 
 export default {
@@ -7,6 +7,6 @@ export default {
   tags: ["autodocs"],
 } as Meta;
 
-const Template: Story = (args: any) => <Layout {...args} />;
+const Template: StoryFn = (args: any) => <Layout {...args} />;
 
 export const Default = Template.bind({});
