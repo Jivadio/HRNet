@@ -1,5 +1,6 @@
 import Logo from "./images/logo.webp";
 import { Link } from "react-router-dom";
+import Button from "../Button/Button.tsx";
 
 export default function Header() {
   return (
@@ -13,14 +14,11 @@ export default function Header() {
           <img className="h-8 w-auto" src={Logo} alt="HRNet Logo" />
         </Link>
         <div className="flex flex-1 justify-end">
-          <Link
-            to="/employees"
-            className="text-sm font-semibold leading-6 text-black hover:text-gray-500 transition-colors duration-200"
-            role="link"
-            aria-label="View Current Employees"
-          >
-            View Current Employees <span aria-hidden="true">&rarr;</span>
-          </Link>
+            <Button
+                label="View Current Employees"
+                type="link"
+                href="/employees"
+                className="text-sm font-semibold leading-6 text-black hover:text-gray-500 transition-colors duration-200" />
         </div>
       </nav>
     </header>

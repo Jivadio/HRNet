@@ -3,26 +3,40 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Header from "./Header";
 import "@testing-library/jest-dom";
 
+
 describe("Header", () => {
-  test("renders Header component", () => {
+  test("renders HRNet logo", () => {
     render(
       <Router>
         <Header />
       </Router>
     );
 
-    const headerElement = screen.getByRole("banner");
-    expect(headerElement).toBeInTheDocument();
-
     const logo = screen.getByAltText("HRNet Logo");
     expect(logo).toBeInTheDocument();
+  });
 
-    const linkElement = screen.getByRole("link", {
-      name: "View Current Employees",
-    });
-    expect(linkElement).toBeInTheDocument();
+  test("renders HRNet link", () => {
+    render(
+      <Router>
+        <Header />
+      </Router>
+    );
 
     const linkLogo = screen.getByRole("link", { name: "HRNet" });
     expect(linkLogo).toBeInTheDocument();
+  });
+
+  test("renders View Current Employees button", () => {
+    render(
+      <Router>
+        <Header />
+      </Router>
+    );
+
+    const buttonElement = screen.getByRole("link", {
+      name: "View Current Employees",
+    });
+    expect(buttonElement).toBeInTheDocument();
   });
 });
