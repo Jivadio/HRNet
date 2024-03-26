@@ -11,6 +11,9 @@ describe("Header", () => {
       </Router>
     );
 
+    const headerElement = screen.getByRole("banner");
+    expect(headerElement).toBeInTheDocument();
+
     const logo = screen.getByAltText("HRNet Logo");
     expect(logo).toBeInTheDocument();
 

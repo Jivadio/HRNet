@@ -6,9 +6,7 @@ describe("Footer", () => {
   test("renders Footer component", () => {
     render(<Footer />);
 
-    const footerElement = screen.getByText(
-      "© 2024 HRNet. Tout droits réservés."
-    );
+    const footerElement = screen.getByRole("contentinfo");
     expect(footerElement).toBeInTheDocument();
   });
 });
