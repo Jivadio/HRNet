@@ -4,6 +4,7 @@ import Header from "./Header";
 export default {
   title: "Layouts/Header",
   component: Header,
+  tags: ["autodocs"],
 } as Meta;
 
 const Template: Story = (args: any) => <Header {...args} />;

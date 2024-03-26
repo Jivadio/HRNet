@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/react";
-import Footer from "./Footer";
+import Layout from "./Layout";
 
 export default {
-  title: "Layouts/Footer",
-  component: Footer,
+  title: "Layouts/Layout",
+  component: Layout,
   tags: ["autodocs"],
 } as Meta;
 
-const Template: Story = (args: any) => <Footer {...args} />;
+const Template: Story = (args: any) => <Layout {...args} />;
 
 export const Default = Template.bind({});
