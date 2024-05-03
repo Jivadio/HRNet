@@ -1,5 +1,3 @@
-import DatePicker from '../DatePicker/DatePicker';
-
 export default function Footer() {
   return (
     <footer className="bg-white">
@@ -7,7 +5,6 @@ export default function Footer() {
         <div className="mt-8 md:order-1 md:mt-0">
           <p className="text-center text-xs leading-5 text-gray-500">
             &copy; 2024 WealthHealth, HRNet. Tout droits réservés.
-              <DatePicker />
           </p>
         </div>
       </div>
