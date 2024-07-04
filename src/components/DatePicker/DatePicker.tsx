@@ -1,152 +1,152 @@
-import { useEffect, useState } from "react";
-import { DatePickerProps } from "./DatePicker.types";
+import { useRef, useState } from "react";
+import { ArrowLeftIcon, ArrowRightIcon, CalendarIcon } from "@heroicons/react/24/solid";
+import {
+    WEEKDAY_SHORT_NAMES as WEEK_DAYS,
+    CURRENT_MONTH,
+    CURRENT_YEAR,
+    fetchFullMonth,
+    fetchMonthLength,
+    fetchMonthStart,
+    padZero,
+} from "../../utils/datepicker";
 
-export default function Datepicker({
-  name,
-  refHook,
-}: Readonly<DatePickerProps>) {
-  const [open, setOpen] = useState(false);
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  const [save, setSave] = useState(false);
+import { FieldErrors, UseFormSetValue } from "react-hook-form";
 
-  const [date, setDate] = useState("");
+interface DatePickerProps {
+    label: string;
+    name: string;
+    value: Date;
+    setValue: UseFormSetValue<any>
+    errors: FieldErrors<any>;
+}
+export default function DatePicker({
+                                       label,
+                                       name,
+                                       value,
+                                       setValue,
+                                       errors,
+                                   }: DatePickerProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [year, setYear] = useState(CURRENT_YEAR);
+    const [month, setMonth] = useState(CURRENT_MONTH);
 
-  useEffect(() => {
-    if (save) {
-      const formattedDay = day.padStart(2, "0");
-      const monthIndex = monthsArray.indexOf(month);
-      const formattedMonth = (monthIndex + 1).toString().padStart(2, "0");
-      setDate(`${formattedDay}/${formattedMonth}/${year}`);
-      setSave(false);
-      setOpen(!open);
+    const firstDayOfMonth = fetchMonthStart(year, month);
+    const daysInMonth = fetchMonthLength(year, month);
+
+    const today = new Date();
+    const calendarDays = [];
+
+    const calendarContainerRef = useRef<HTMLDivElement>(null);
+    document.addEventListener("click", e => {
+        if (!calendarContainerRef.current?.contains(e.target as HTMLElement))
+            setIsOpen(false);
+    });
+
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        calendarDays.push(<div key={`empty-${i}`} className="bg-gray-300"></div>);
     }
-  }, [save, day, month, year, open]);
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    setOpen(!open);
-  };
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateValue = new Date(
+            `${year}-${padZero(month + 1)}-${padZero(day)}`
+        );
 
-  const saveDate = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    setSave(true);
-  };
+        calendarDays.push(
+            <button
+                type="button"
+                key={day}
+                onClick={() => {
+                    setValue(name, dateValue);
+                    setIsOpen(false);
+                }}
+                className={`cursor-pointer ${today.toDateString() === dateValue.toDateString() ? "bg-orange-200" : "bg-gray-100"} transition-all hover:bg-orange-300 focus:z-10 focus:bg-orange-300`}
+            >
+                {padZero(day)}
+            </button>
+        );
+    }
 
-  const monthsArray = [
-    "Janvier",
-    "Février",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Août",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "Décembre",
-  ];
-
-  const currentYear = new Date().getFullYear();
-  const yearsArray = Array.from(
-    { length: currentYear - 1922 },
-    (_, index) => currentYear - index
-  );
-
-  return (
-    <>
-      <input
-        id={name}
-        type="text"
-        onClick={handleClick}
-        value={date}
-        ref={refHook}
-        readOnly
-        className="cursor-pointer w-full rounded-md border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        data-testid="date-input"
-      />
-      <div
-        className={`${open ? "flex" : "hidden"} flex-col bg-white shadow-lg rounded-md mt-1 border border-gray-300`}
-        data-testid="dropdown-container"
-      >
-        <div className="p-4" data-testid="day-dropdown">
-          <label
-            htmlFor={`${name}-day`}
-            className="block text-sm font-medium text-gray-700"
-          >
-            Jour
-          </label>
-          <select
-            name={`${name}-day`}
-            id={`${name}-day`}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            onChange={(e) => setDay(e.target.value)}
-            data-testid="day-select"
-          >
-            <option value="">Sélectionnez un jour</option>
-            {[...Array(31).keys()].map((day) => (
-              <option key={day} value={day + 1}>
-                {day + 1}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="px-4 py-2" data-testid="month-dropdown">
-          <label
-            htmlFor={`${name}-month`}
-            className="block text-sm font-medium text-gray-700"
-          >
-            Mois
-          </label>
-          <select
-            name={`${name}-month`}
-            id={`${name}-month`}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            onChange={(e) => setMonth(e.target.value)}
-            data-testid="month-select"
-          >
-            <option value="">Sélectionnez un mois</option>
-            {monthsArray.map((month) => (
-              <option key={month} value={month}>
-                {month}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="px-4 pb-4" data-testid="year-dropdown">
-          <label
-            htmlFor={`${name}-year`}
-            className="block text-sm font-medium text-gray-700"
-          >
-            Année
-          </label>
-          <select
-            name={`${name}-year`}
-            id={`${name}-year`}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            onChange={(e) => setYear(e.target.value)}
-            data-testid="year-select"
-          >
-            <option value="">Sélectionnez une année</option>
-            {yearsArray.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          className="mx-4 mb-4 px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline"
-          onClick={saveDate}
-          data-testid="save-button"
+    return (
+        <div
+            className="flex flex-col gap-1"
+            aria-label="date picker"
+            ref={calendarContainerRef}
         >
-          Sauvegarder
-        </button>
-      </div>
-    </>
-  );
+            <p className="text-sm font-medium">{label}</p>
+            <div className="relative rounded-md border-[1px] border-gray-300 p-2 transition-all">
+                <span>{value.toDateString()}</span>
+                <button
+                    type="button"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 transition-all hover:scale-110 focus:scale-110"
+                    onClick={() => setIsOpen(!isOpen)}
+                    aria-label="open date picker"
+                >
+                    <CalendarIcon className="w-4 h-4" />
+                </button>
+                {isOpen && (
+                    <div className="datePicker absolute left-0 top-[calc(100%_+_0.5rem)] z-10 grid w-full cursor-auto grid-cols-1 gap-2 rounded-md border-[1px] border-gray-400 bg-white p-2 text-center shadow-md">
+                        <div className="grid grid-cols-2 gap-1">
+                            <p className="relative rounded-sm border-[1px] border-gray-200">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (month === 0) {
+                                            setYear(year - 1);
+                                            setMonth(11);
+                                        } else setMonth(month - 1);
+                                    }}
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-sm transition-all hover:bg-gray-200 hover:ring-1 hover:ring-gray-500 focus:bg-gray-200 focus:ring-1 focus:ring-gray-500"
+                                >
+                                    <ArrowLeftIcon className="w-4 h-4" />
+                                </button>
+                                {fetchFullMonth(month)}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (month === 11) {
+                                            setYear(year + 1);
+                                            setMonth(0);
+                                        } else setMonth(month + 1);
+                                    }}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-sm transition-all hover:bg-gray-200 hover:ring-1 hover:ring-gray-500 focus:bg-gray-200 focus:ring-1 focus:ring-gray-500"
+                                >
+                                    <ArrowRightIcon className="w-4 h-4" />
+                                </button>
+                            </p>
+
+                            <p className="relative select-none rounded-sm border-[1px] border-gray-200">
+                                <button
+                                    type="button"
+                                    onClick={() => setYear(year - 1)}
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-sm transition-all hover:bg-gray-200 hover:ring-1 hover:ring-gray-500 focus:bg-gray-200 focus:ring-1 focus:ring-gray-500"
+                                >
+                                    <ArrowLeftIcon className="w-4 h-4" />
+                                </button>
+                                {year}
+                                <button
+                                    type="button"
+                                    onClick={() => setYear(year + 1)}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-sm transition-all hover:bg-gray-200 hover:ring-1 hover:ring-gray-500 focus:bg-gray-200 focus:ring-1 focus:ring-gray-500"
+                                >
+                                    <ArrowRightIcon className="w-4 h-4" />
+                                </button>
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-[1px] border-[1px] border-gray-300 bg-gray-300">
+                            {WEEK_DAYS.map(day => (
+                                <div key={day} className="bg-white">
+                                    {day}
+                                </div>
+                            ))}
+                            {calendarDays}
+                        </div>
+                    </div>
+                )}
+            </div>
+            {errors[name] && (
+                <span className="text-red-400">{errors[name]?.message}</span>
+            )}
+        </div>
+    );
 }

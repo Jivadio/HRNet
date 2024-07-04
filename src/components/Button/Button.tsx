@@ -1,33 +1,30 @@
-import {ButtonTypes, IconType} from "./Button.types.tsx";
-import { ArrowRightIcon} from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+interface ButtonProps {
+    type?: "button" | "submit";
+    label: string;
+    onClick?: () => void;
+    isDisabled?: boolean;
+}
 
-const ICONS = {
-    [IconType.ArrowRight]: ArrowRightIcon,
-};
-
-// @ts-ignore
-export default function Button({ label, icon, type, href, className }: ButtonTypes) {
-    const IconComponent = icon ? ICONS[icon] : null;
-    const commonClasses = "inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600";
-
-    if (type === "button") {
-        return (
-            <button type="button" className={commonClasses + (className ? ` ${className}` : "")}>
-                { label }
-                { IconComponent && <IconComponent data-testid="button-icon" className="h-4 w-4" /> }
-            </button>
-        );
-    }
-
-    if (type === "link" && href) {
-        return (
-            <Link to={href} className={commonClasses + (className ? ` ${className}` : "")}>
-                { label }
-                { IconComponent && <IconComponent data-testid="button-icon" className="h-4 w-4" /> }
-            </Link>
-        );
-    }
-
-    return null;
+export default function Button({
+                                   type = "button",
+                                   label,
+                                   onClick = () => {},
+                                   isDisabled = false,
+                               }: ButtonProps) {
+    return (
+        <button
+            type={type}
+            onClick={onClick}
+            disabled={isDisabled}
+            data-testid={`${type === "submit" ? "submit" : ""}`}
+            className={`relative isolation-auto z-10 overflow-hidden
+			rounded-md border-[1px] border-main-400 bg-white px-4 py-1 transition-all before:absolute before:-right-full
+			before:-z-10 before:aspect-square before:w-full before:rounded-full before:bg-main-400 before:transition-all 
+			before:duration-500 sm:py-2 ${isDisabled ? "cursor-progress" : "cursor-pointer"}  
+			hover:text-main-50 before:hover:right-0 before:hover:w-full before:hover:scale-150 before:hover:duration-500 
+			focus:text-main-50 before:focus:right-0 before:focus:w-full before:focus:scale-150 before:focus:duration-500`}
+        >
+            {label}
+        </button>
+    );
 }

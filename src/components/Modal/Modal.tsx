@@ -1,63 +1,55 @@
-import React, { useRef } from "react";
-// import { XMarkIcon } from "@heroicons/react/24/solid";
+// ** Import core packages
+import { ForwardedRef, forwardRef } from "react";
 
-interface ModalProps {
-  id: string;
-  content: string;
-  open: boolean;
-  onClose: (value: boolean) => void;
-  className?: string;
-  closeButton?: boolean;
-}
+// ** Import icons
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
-const Modal: React.FC<ModalProps> = ({
-  id,
-  content,
-  open,
-  onClose,
-  closeButton = true,
-  ...props
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
+/**
+ * Returns the Modal component.
+ * The content of the modal is passed as children
+ *
+ * @param ref - The ref of the modal
+ *
+ */
+const Modal = forwardRef(function ModalComponent(
+    { children }: { children: React.ReactNode },
+    ref: ForwardedRef<HTMLDialogElement | null>
+) {
+  /**
+   * Closes the modal
+   */
+  function closeModal() {
+    if (ref && "current" in ref && ref.current) {
+      ref.current.close();
+    }
+  }
 
-  const handleClose = () => {
-    onClose(false);
-  };
-
+  // The modal will be closed when the user clicks on the backdrop (outside the dialog)
+  // or when the user clicks on the close button
   return (
-    <>
-      {open && (
-        <>
-          <div
-            id={`${id}-background`}
-            className="fixed top-0 right-0 bottom-0 left-0 bg-black bg-opacity-75"
-            data-testid={`${id}-background`}
-          ></div>
-          <div
-            id={`${id}-content`}
-            ref={ref}
-            className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded bg-white shadow-md"
-            {...props}
-            role="dialog"
-            aria-modal="true"
-            data-testid={`${id}-content`}
+      <dialog
+          ref={ref}
+          onClick={closeModal}
+          data-testid="modal"
+          className="rounded-md shadow-md"
+      >
+        <div
+            className="relative px-16 py-8"
+            // Stops the click event from bubbling up to the parent dialog element
+            // and closing the modal
+            onClick={e => e.stopPropagation()}
+        >
+          <button
+              data-testid="modal-close"
+              className="absolute right-2 top-2 transition-all hover:scale-110 focus:scale-110"
+              onClick={closeModal}
           >
-            {closeButton && (
-              <button
-                id={`${id}-close`}
-                className="absolute top-0 right-0 m-2"
-                onClick={handleClose}
-                data-testid={`${id}-close`}
-              >
-                Close
-              </button>
-            )}
-            {content}
-          </div>
-        </>
-      )}
-    </>
+            <XMarkIcon className="w-4 h-4" />
+          </button>
+          {children}
+        </div>
+      </dialog>
   );
-};
+});
 
 export default Modal;

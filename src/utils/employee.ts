@@ -8,12 +8,12 @@ export function employeeFilter(
     return (
       employee.firstName.toLowerCase().includes(value.toLowerCase()) ||
       employee.lastName.toLowerCase().includes(value.toLowerCase()) ||
-      employee.department.toLowerCase().includes(value.toLowerCase()) ||
-      employee.street.toLowerCase().includes(value.toLowerCase()) ||
-      employee.city.toLowerCase().includes(value.toLowerCase()) ||
-      employee.state.toLowerCase().includes(value.toLowerCase()) ||
+      employee.departmentName.toLowerCase().includes(value.toLowerCase()) ||
+      employee.streetAddress.toLowerCase().includes(value.toLowerCase()) ||
+      employee.cityName.toLowerCase().includes(value.toLowerCase()) ||
+      employee.stateName.toLowerCase().includes(value.toLowerCase()) ||
       employee.startDate.toLowerCase().includes(value.toLowerCase()) ||
-      employee.dateOfBirth.toLowerCase().includes(value.toLowerCase())
+      employee.birthDate.toLowerCase().includes(value.toLowerCase())
     );
   });
 

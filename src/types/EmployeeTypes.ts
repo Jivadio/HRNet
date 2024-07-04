@@ -3,10 +3,10 @@ export interface EmployeesTypes {
   firstName: string;
   lastName: string;
   startDate: string;
-  department: string;
-  dateOfBirth: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
+  departmentName: string;
+  birthDate: string;
+  streetAddress: string;
+  cityName: string;
+  stateName: string;
+  postalCode: string;
 }
